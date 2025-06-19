@@ -119,36 +119,109 @@
                         <div id="workout-list" class="space-y-4 max-h-96 overflow-y-auto pr-2"></div>
                     </section>
                 </div>
-                <!-- Другие вкладки -->
-                <div id="tab-plan-content" class="hidden">...</div>
-                <div id="tab-weight-content" class="hidden">...</div>
-                <div id="tab-calories-content" class="hidden">...</div>
+                
+                <!-- Контент вкладки "План" -->
+                <div id="tab-plan-content" class="hidden">
+                     <section>
+                        <h2 class="text-2xl font-bold mb-4">План тренировок</h2>
+                        <div id="calendar-container">
+                            <div class="flex justify-between items-center mb-4">
+                                <button id="prev-month-btn" class="p-2 rounded-full bg-gray-700 hover:bg-gray-600">&lt;</button>
+                                <h3 id="month-year" class="text-xl font-semibold"></h3>
+                                <button id="next-month-btn" class="p-2 rounded-full bg-gray-700 hover:bg-gray-600">&gt;</button>
+                            </div>
+                            <div id="calendar-grid" class="grid grid-cols-7 gap-1 text-center"></div>
+                        </div>
+                    </section>
+                </div>
+                
+                <!-- Контент вкладки "Вес" -->
+                <div id="tab-weight-content" class="hidden">
+                    <section>
+                        <h2 class="text-2xl font-bold mb-4">Отслеживание веса</h2>
+                        <form id="weight-form" class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6 items-end">
+                            <div class="flex flex-col">
+                                <label for="weight-date" class="text-sm text-gray-400 mb-1">Дата</label>
+                                <input type="date" id="weight-date" class="bg-gray-700 w-full p-3 rounded-lg border border-gray-600" required>
+                            </div>
+                            <div class="flex flex-col">
+                                <label for="weight-value" class="text-sm text-gray-400 mb-1">Вес (кг)</label>
+                                <input type="number" step="0.1" id="weight-value" placeholder="Напр., 75.5" class="bg-gray-700 w-full p-3 rounded-lg border border-gray-600" required>
+                            </div>
+                            <button type="button" id="add-weight-btn" class="w-full bg-blue-500 hover:bg-blue-600 font-bold py-3 px-4 rounded-lg">Записать вес</button>
+                        </form>
+                        <div class="chart-container">
+                            <canvas id="weight-chart"></canvas>
+                        </div>
+                    </section>
+                </div>
+
+                <!-- Контент вкладки "Калории" -->
+                <div id="tab-calories-content" class="hidden">
+                    <section>
+                        <h2 class="text-2xl font-bold mb-4">Счётчик калорий</h2>
+                        <form id="calorie-form" class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6 items-end">
+                             <div class="flex flex-col md:col-span-2">
+                                <label for="calorie-meal" class="text-sm text-gray-400 mb-1">Блюдо или продукт</label>
+                                <input type="text" id="calorie-meal" placeholder="Напр., Куриная грудка" class="bg-gray-700 p-3 rounded-lg border border-gray-600" required>
+                             </div>
+                             <div class="flex flex-col">
+                                <label for="calorie-value" class="text-sm text-gray-400 mb-1">Калории</label>
+                                <input type="number" id="calorie-value" placeholder="Напр., 165" class="bg-gray-700 p-3 rounded-lg border border-gray-600" required>
+                             </div>
+                            <button type="submit" class="md:col-span-3 bg-amber-500 hover:bg-amber-600 font-bold py-3 px-4 rounded-lg">Добавить калории</button>
+                        </form>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <div class="bg-gray-700/50 p-4 rounded-lg text-center flex flex-col justify-center">
+                                <p class="text-gray-400">Калорий за сегодня:</p>
+                                <p id="daily-calories" class="text-4xl font-bold text-amber-400">0</p>
+                            </div>
+                             <div id="calorie-list" class="space-y-2 max-h-60 overflow-y-auto pr-2"></div>
+                        </div>
+                    </section>
+                </div>
             </div>
         </main>
     </div>
 
     <!-- Модальное окно и уведомление -->
-    <div id="plan-modal" class="hidden ...">...</div>
+    <div id="plan-modal" class="hidden fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-40 p-4">
+        <div class="bg-gray-800 p-6 rounded-xl shadow-2xl w-full max-w-md">
+            <h3 class="text-xl font-bold mb-4">План на <span id="plan-date"></span></h3>
+            <form id="plan-form">
+                <input type="hidden" id="plan-hidden-date">
+                <input type="text" id="plan-name" placeholder="Название тренировки (напр., День ног)" class="w-full bg-gray-700 p-3 mb-4 rounded-lg border border-gray-600" required>
+                <textarea id="plan-exercises" placeholder="Упражнения, подходы, повторения..." rows="5" class="w-full bg-gray-700 p-3 mb-4 rounded-lg border border-gray-600"></textarea>
+                <div class="flex justify-between items-center">
+                    <div>
+                        <button type="button" id="delete-plan-btn" class="bg-red-600 hover:bg-red-700 font-bold py-2 px-4 rounded-lg">Удалить</button>
+                    </div>
+                    <div class="flex gap-4">
+                        <button type="button" id="close-modal-btn" class="bg-gray-600 hover:bg-gray-500 font-bold py-2 px-4 rounded-lg">Закрыть</button>
+                        <button type="submit" class="bg-teal-500 hover:bg-teal-600 font-bold py-2 px-4 rounded-lg">Сохранить план</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
     <div id="toast" class="toast"></div>
     
     <!-- 2. ПОДКЛЮЧЕНИЕ FIREBASE SDK -->
     <script type="module">
         // Импортируем Firebase
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
-        import { getFirestore, collection, doc, setDoc, onSnapshot, deleteDoc } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore.js";
+        import { getFirestore, collection, doc, setDoc, onSnapshot, deleteDoc, getDocs } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore.js";
         import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-auth.js";
-
-        // Initializing Firebase
-		import { initializeApp } from "firebase/app";
-
+		
 		// Web app's Firebase configuration
 		const firebaseConfig = {
-		apiKey: "AIzaSyC3AM4Iu-nSvR_S9GYX4ljnMI2rOM8xCi8",
-		authDomain: "fitness-tracker-app2.firebaseapp.com",
-		projectId: "fitness-tracker-app2",
-		storageBucket: "fitness-tracker-app2.firebasestorage.app",
-		messagingSenderId: "450123175302",
-		appId: "1:450123175302:web:a4e6ecd1ca6765f2ff8807"
+            apiKey: "AIzaSyC3AM4Iu-nSvR_S9GYX4ljnMI2rOM8xCi8",
+            authDomain: "fitness-tracker-app2.firebaseapp.com",
+            projectId: "fitness-tracker-app2",
+            storageBucket: "fitness-tracker-app2.appspot.com",
+            messagingSenderId: "450123175302",
+            appId: "1:450123175302:web:a4e6ecd1ca6765f2ff8807"
 		};
         
         // --- ИНИЦИАЛИЗАЦИЯ И НАСТРОЙКА ПРИЛОЖЕНИЯ ---
@@ -310,10 +383,59 @@ function initializeAppLogic() {
     let currentDate = new Date();
 
     function renderCalendar() {
-       // ... (код рендеринга календаря без изменений) ...
+       calendarGrid.innerHTML = '';
+        const year = currentDate.getFullYear();
+        const month = currentDate.getMonth();
+        monthYearEl.textContent = new Date(year, month).toLocaleString('ru-RU', { month: 'long', year: 'numeric' });
+        const firstDayOfMonth = new Date(year, month, 1).getDay();
+        const daysInMonth = new Date(year, month + 1, 0).getDate();
+        const weekdays = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
+        weekdays.forEach(day => {
+            calendarGrid.appendChild(Object.assign(document.createElement('div'), { className: 'font-bold text-gray-400 text-sm', textContent: day }));
+        });
+        const startOffset = (firstDayOfMonth === 0) ? 6 : firstDayOfMonth - 1;
+        for (let i = 0; i < startOffset; i++) {
+            calendarGrid.appendChild(document.createElement('div'));
+        }
+        for (let day = 1; day <= daysInMonth; day++) {
+            const dayEl = document.createElement('div');
+            const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+            dayEl.className = 'calendar-day p-2 rounded-lg cursor-pointer flex items-center justify-center border border-transparent hover:border-teal-500';
+            dayEl.textContent = day;
+            dayEl.dataset.date = dateStr;
+            const planForDay = plans.find(p => p.date === dateStr);
+            if (planForDay) {
+                dayEl.classList.add('has-entry');
+                if (planForDay.status === 'completed') {
+                    dayEl.classList.add('completed');
+                }
+            }
+            if (dateStr === today) {
+                dayEl.classList.add('bg-teal-500/30');
+            }
+            dayEl.addEventListener('click', () => openPlanModal(dateStr));
+            calendarGrid.appendChild(dayEl);
+        }
     };
     
-    // ... (остальной код календаря без изменений, но с асинхронными вызовами) ...
+    const openPlanModal = (date) => {
+        const existingPlan = plans.find(p => p.date === date);
+        document.getElementById('plan-date').textContent = formatDisplayDate(date);
+        document.getElementById('plan-hidden-date').value = date;
+        if (existingPlan) {
+            document.getElementById('plan-name').value = existingPlan.name;
+            document.getElementById('plan-exercises').value = existingPlan.exercises;
+            document.getElementById('delete-plan-btn').classList.remove('hidden');
+        } else {
+            planForm.reset();
+            document.getElementById('plan-hidden-date').value = date; // ensure date is set for new plans
+            document.getElementById('delete-plan-btn').classList.add('hidden');
+        }
+        planModal.classList.remove('hidden');
+    };
+
+    const closeModal = () => planModal.classList.add('hidden');
+    document.getElementById('close-modal-btn').addEventListener('click', closeModal);
 
     planForm.addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -339,6 +461,10 @@ function initializeAppLogic() {
     window.deletePlanWrapper = async (id) => {
         await deletePlan(id);
     }
+    document.getElementById('delete-plan-btn').addEventListener('click', async () => {
+        const date = document.getElementById('plan-hidden-date').value;
+        await deletePlan(date);
+    });
     
     async function deletePlan(id) {
         try {
@@ -350,6 +476,10 @@ function initializeAppLogic() {
         }
         closeModal();
     };
+    
+    prevMonthBtn.addEventListener('click', () => { currentDate.setMonth(currentDate.getMonth() - 1); renderCalendar(); });
+    nextMonthBtn.addEventListener('click', () => { currentDate.setMonth(currentDate.getMonth() + 1); renderCalendar(); });
+
 
     // === ЛОГИКА ВЕСА И ГРАФИКА ===
     const addWeightBtn = document.getElementById('add-weight-btn');
@@ -357,7 +487,24 @@ function initializeAppLogic() {
     let weightChart;
 
     function renderWeightChart() {
-       // ... (код рендеринга графика без изменений) ...
+       const ctx = document.getElementById('weight-chart').getContext('2d');
+        const sortedWeights = [...weights].sort((a, b) => new Date(a.date) - new Date(b.date));
+        const labels = sortedWeights.map(w => formatDisplayDate(w.date));
+        const data = sortedWeights.map(w => w.value);
+        if (weightChart) weightChart.destroy();
+        weightChart = new Chart(ctx, { 
+            type: 'line',
+            data: { labels, datasets: [{
+                label: 'Вес (кг)', data, borderColor: '#3b82f6', backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                tension: 0.2, fill: true, pointBackgroundColor: '#ffffff', pointBorderColor: '#3b82f6', pointHoverRadius: 7
+            }]},
+            options: {
+                responsive: true, maintainAspectRatio: false,
+                scales: { y: { beginAtZero: false, ticks: { color: '#9ca3af' }, grid: { color: 'rgba(156, 163, 175, 0.1)'}},
+                          x: { ticks: { color: '#9ca3af' }, grid: { display: false }} },
+                plugins: { legend: { display: false }}
+            }
+        });
     };
 
     addWeightBtn.addEventListener('click', async () => {
@@ -383,7 +530,22 @@ function initializeAppLogic() {
     const dailyCaloriesEl = document.getElementById('daily-calories');
     
     function renderCalories() {
-        // ... (код рендеринга калорий без изменений) ...
+        calorieList.innerHTML = '';
+        let totalToday = 0;
+        const todayStr = getTodayString();
+        const todayCalories = calories.filter(c => c.date === todayStr);
+        if (todayCalories.length === 0) {
+            calorieList.innerHTML = '<p class="text-gray-500 text-center">Сегодня еще не было записей.</p>';
+        } else {
+             todayCalories.forEach((calorie) => {
+                totalToday += calorie.value;
+                const calorieEl = document.createElement('div');
+                calorieEl.className = 'flex justify-between items-center bg-gray-700/50 p-2 rounded-md text-sm';
+                calorieEl.innerHTML = `<span>${calorie.meal}</span><span class="font-semibold text-amber-400">${calorie.value} ккал</span>`;
+                calorieList.appendChild(calorieEl);
+            });
+        }
+        dailyCaloriesEl.textContent = totalToday;
     };
 
     calorieForm.addEventListener('submit', async (e) => {
